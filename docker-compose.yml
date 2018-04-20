@@ -1,0 +1,10 @@
+version: "3.2"
+services:
+  web:
+    build: ./app
+    container_name: alpha_zero
+    volumes:
+      - ./app:/opt/webapp/
+    command: python app.py runserver -h 0.0.0.0
+    ports:
+      - 5000:5000
