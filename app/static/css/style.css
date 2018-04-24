@@ -1,32 +1,48 @@
-.align-center{
+.align-center {
   text-align: center;
 }
-.align-padding{
+
+.align-padding {
   padding: 0 4rem;
 }
+
 .board {
   margin: 0 auto;
+  cursor: crosshair;
+  margin-left: -50px;
 }
-.remove-padding-top{
+
+.padding-left{
+  padding-left: 80px;
+}
+
+
+.remove-padding-top {
   padding-top: 0;
 }
-.div-large{
+
+.div-large {
   width: 100%;
 }
-.padding-bottom{
+
+.padding-bottom {
   padding-bottom: 1rem;
 }
-.hide{
+
+.hide {
   display: none;
 }
-.title{
+
+.title {
   font-size: 1rem !important;
 }
-.uk-button-group{
+
+.uk-button-group {
   justify-content: center;
   width: 100%;
   padding: 1rem 0;
 }
+
 .modal {
   display: none;
   position: fixed;
@@ -52,5 +68,38 @@ body.loading .modal {
   display: block;
 }
 
+/* Tablero de ajedrez */
 
+td {
+  line-height: 0;
+  width: 55px;
+  height: 55px;
+  text-align: center;
+  vertical-align: middle;
+  padding: 0;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
 
+.white {
+  background-color: #f0d9b5;
+  color: #b58863;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+}
+
+.black {
+  background-color: #b58863;
+  color: #f0d9b5;
+}
+
+.notation {
+  cursor: default;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
