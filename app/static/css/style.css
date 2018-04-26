@@ -12,10 +12,9 @@
   margin-left: -50px;
 }
 
-.padding-left{
+.padding-left {
   padding-left: 80px;
 }
-
 
 .remove-padding-top {
   padding-top: 0;
@@ -102,4 +101,17 @@ td {
   cursor: default;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
+}
+
+.piece {
+  height: 50px;
+  width: 50px;
+}
+
+.margin-left {
+  margin-left: 1rem;
+}
+
+.remove-margin-bottom-20px{
+  margin-bottom: -1rem;
 }
