@@ -112,6 +112,19 @@ td {
   margin-left: 1rem;
 }
 
-.remove-margin-bottom-20px{
-  margin-bottom: -1rem;
+.highlight {
+  -webkit-box-shadow: inset 0 0 3px 3px yellow;
+  -moz-box-shadow: inset 0 0 3px 3px yellow;
+  box-shadow: inset 0 0 3px 3px yellow;
+}
+
+#bH:hover {
+  cursor: -ms-grabbing;
+  cursor: -moz-grabbing;
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+
+.opacity{
+  opacity: .4;
 }

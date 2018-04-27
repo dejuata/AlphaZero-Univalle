@@ -1,4 +1,4 @@
-let APPLE = 1;
+let MOVE, CELL, HORSE, MOVES
 
 // create board
 function board() {
@@ -23,7 +23,8 @@ function board() {
         if (i % 2 != 0 && j % 2 != 0) color = 'black';
         if (i % 2 == 0 && j % 2 == 0) color = 'black';
         if (i % 2 != 0 && j % 2 == 0) color = 'white';
-        cell.innerHTML = `<div class="cell ${color}" id=${columns[j]}${i-1}> </div>`;
+        // id : row, column
+        cell.innerHTML = `<div class="cell ${color}" id=${i - 2}${j - 1} onclick="movePiece(this)"> </div>`;
       }
     }
   }
@@ -38,9 +39,8 @@ function buildPieces(piece) {
 }
 
 function positionRandom() {
-  let columns = 'abcdef'.split('');
-  let rows = '123456'.split('');
-  return `${columns[parseInt(6 * Math.random())]}${rows[parseInt(6 * Math.random())]}`;
+  let numbers = '012345'.split('');
+  return `${numbers[parseInt(6 * Math.random())]}${numbers[parseInt(6 * Math.random())]}`;
 }
 
 function positionPieces(n) {
@@ -68,10 +68,9 @@ function buildImages(position) {
 }
 
 function emptyBoard() {
-  let columns = 'abcdef'.split('');
-  for (let i = 0; i < columns.length; i++){
-    for (let j = 1; j < 7; j++){
-      let cell = `${columns[i]}${j}`;
+  for (let i = 0; i < 6; i++){
+    for (let j = 0; j < 6; j++){
+      let cell = `${i}${j}`;
       let div = document.getElementById(cell);
       while (div.firstChild) {
         div.removeChild(div.firstChild);
@@ -94,23 +93,85 @@ function numberApple() {
 
 function insertPiecestoBoard() {
   let btn = document.getElementById('play');
-  let blackHorse = buildPieces('bH');
-  let whiteHorse = buildPieces('wH');
-  let apples = buildApples(5);
 
   btn.onclick = () => {
+    let whiteHorse = buildPieces('wH');
+    let blackHorse = buildPieces('bH');
+    let apples = buildApples(parseInt(numberApple()));
+
     // clear board
     emptyBoard();
     // get position random
     let position = positionPieces(parseInt(numberApple()) + 2);
     let images = buildImages(position);
-    console.log(numberApple());
+
     images[0].appendChild(whiteHorse);
     images[1].appendChild(blackHorse);
 
     for (let i = 2; i < images.length; i++){
       images[i].appendChild(apples[i - 2]);
     }
+  }
+}
+
+function validateMove(n) {
+  let result = [];
+  let position = n.split('').map((x) => parseInt(x))
+  let row = position[0];
+  let col = position[1]
+
+  if (row >= 0 && row <= 4) {
+    if (col >= 0 && col <= 3) result.push(`${row + 1}${col + 2}`);
+    if (col <= 5 && col >= 2) result.push(`${row + 1}${col - 2}`);
+  }
+  if (row <= 5 && row >= 1) {
+    if (col >= 0 && col <= 3) result.push(`${row - 1}${col + 2}`);
+    if (col <= 5 && col >= 2) result.push(`${row - 1}${col - 2}`);
+  }
+  if (row >= 0 && row <= 3) {
+    if (col >= 0 && col <= 4) result.push(`${row + 2}${col + 1}`);
+    if (col <= 5 && col >= 1) result.push(`${row + 2}${col - 1}`);
+  }
+  if (row >= 2 && row <= 5) {
+    if (col >= 0 && col <= 4) result.push(`${row - 2}${col + 1}`);
+    if (col <= 5 && col >= 1) result.push(`${row - 2}${col - 1}`);
+  }
+
+  return result;
+}
+
+function highlightCell(position, active) {
+  for (let i = 0; i < position.length; i++){
+    let cell = document.getElementById(position[i]);
+    if (active) {
+      cell.classList.add('highlight');
+    }
+    else {
+      cell.classList.remove('highlight');
+    }
+  }
+}
+
+function movePiece(e) {
+  let piece = e.firstElementChild;
+  if (!MOVE && piece) {
+    CELL = e
+    if (piece.id == 'bH') {
+      MOVES = validateMove(e.id)
+      highlightCell(MOVES, true);
+      piece.classList.add('opacity');
+      HORSE = e.innerHTML;
+      MOVE = true;
+    }
+  }
+  else if(MOVE){
+    CELL.innerHTML = "";
+    e.innerHTML = HORSE;
+    piece = e.firstElementChild;
+    piece.classList.remove('opacity');
+    highlightCell(MOVES, false);
+    MOVE = false;
+    console.log(MOVES)
   }
 }
 
