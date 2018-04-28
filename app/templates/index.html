@@ -6,10 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>AlphaZero Univalle</title>
-  <!-- <link rel="icon" href="{{ url_for('static', filename = 'assets/images/favicon.ico') }}"> -->
+  <link rel="icon" href="{{ url_for('static', filename = 'img/favicon.ico') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename = 'css/uikit.min.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename = 'css/chessboard-0.3.0.css') }}">
 </head>
 
 <body>
@@ -32,11 +31,6 @@
         </div>
         <table id="board" class="board"></table>
       </div>
-      <footer>
-        <p>Created by
-          <a href="https://github.com/dejuata" target="_blank">Juan David Pino</a>
-        </p>
-      </footer>
     </main>
   </div>
   <div class="modal">
@@ -44,8 +38,7 @@
 
   <script src="{{ url_for('static', filename = 'js/jquery-1.8.3.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/uikit.min.js') }}"></script>
-  <script src="{{ url_for('static', filename = 'js/chessboard-0.3.0.js') }}"></script>
-  <script src="{{ url_for('static', filename = 'js/game/main.js') }}"></script>
+  <script src="{{ url_for('static', filename = 'js/game/game.js') }}"></script>
 
 </body>
 

@@ -1,4 +1,4 @@
-let MOVE, CELL, HORSE, MOVES
+let MOVE, CELL, HORSE, MOVES, PLAYER
 
 // create board
 function board() {
@@ -114,11 +114,11 @@ function insertPiecestoBoard() {
   }
 }
 
-function validateMove(n) {
+function possibleMove(n) {
   let result = [];
-  let position = n.split('').map((x) => parseInt(x))
+  let position = n.split('').map((x) => parseInt(x));
   let row = position[0];
-  let col = position[1]
+  let col = position[1];
 
   if (row >= 0 && row <= 4) {
     if (col >= 0 && col <= 3) result.push(`${row + 1}${col + 2}`);
@@ -136,45 +136,70 @@ function validateMove(n) {
     if (col >= 0 && col <= 4) result.push(`${row - 2}${col + 1}`);
     if (col <= 5 && col >= 1) result.push(`${row - 2}${col - 1}`);
   }
-
   return result;
 }
 
-function highlightCell(position, active) {
+function highlightCell(position, active, style = 'highlight1') {
   for (let i = 0; i < position.length; i++){
     let cell = document.getElementById(position[i]);
     if (active) {
-      cell.classList.add('highlight');
+      cell.classList.add(style);
     }
     else {
-      cell.classList.remove('highlight');
+      cell.classList.remove(style);
     }
   }
 }
 
+function selectHorseToMove(e) {
+  MOVES = possibleMove(e.id)
+  highlightCell(MOVES, true);
+  HORSE = e.innerHTML;
+}
+
+function validateMove(e) {
+  CELL.innerHTML = "";
+  e.innerHTML = HORSE;
+}
+
+function removeStyleCell(str) {
+  let style = CELL.className.split(' ');
+  if (style.indexOf(str) >= 0) {
+    CELL.classList.remove(str);
+  }
+}
+
+// move only black horse
 function movePiece(e) {
-  let piece = e.firstElementChild;
-  if (!MOVE && piece) {
-    CELL = e
-    if (piece.id == 'bH') {
-      MOVES = validateMove(e.id)
-      highlightCell(MOVES, true);
-      piece.classList.add('opacity');
-      HORSE = e.innerHTML;
+  if (!MOVE && e.firstElementChild) {
+    PLAYER = e.firstElementChild.id;
+    CELL = e;
+    console.log(e);
+    if (PLAYER == 'bH') {
+      selectHorseToMove(e);
+      e.classList.add('lemon');
       MOVE = true;
     }
   }
-  else if(MOVE){
-    CELL.innerHTML = "";
-    e.innerHTML = HORSE;
-    piece = e.firstElementChild;
-    piece.classList.remove('opacity');
-    highlightCell(MOVES, false);
-    MOVE = false;
-    console.log(MOVES)
+  else if (MOVE) {
+    if (MOVES.indexOf(e.id) >= 0) {
+      validateMove(e);
+      removeStyleCell('lemon');
+      highlightCell(MOVES, false);
+      MOVE = false;
+    }
+    else {
+      removeStyleCell('lemon');
+      highlightCell(MOVES, false);
+      MOVE = false;
+    }
   }
 }
 
+// move only white horse
+function setPiece(position) {
+  let whiteHorse = document.getElementById('wH');
+}
 // Load board
 board();
 // insert random pieces
