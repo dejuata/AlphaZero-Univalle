@@ -121,9 +121,9 @@ td {
 }
 
 .highlight {
-  -webkit-box-shadow: inset 0 0 4px 4px #aaa23a;
+  -webkit-box-shadow: inset 0 4px 4px 4px #aaa23a;
   -moz-box-shadow: inset 0 0 4px 4px #aaa23a;
-  box-shadow: inset 0 0 4px 4px #aaa23a;
+  box-shadow: inset 0 0 5px 5px #aaa23a;
   cursor: pointer;
 }
 

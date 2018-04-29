@@ -1,4 +1,4 @@
-let MOVE, CELL, HORSE, MOVES, PLAYER
+let MOVE, CELL, HORSE, MOVES, PLAYER, MAX
 
 // create board
 function board() {
@@ -111,6 +111,8 @@ function insertPiecestoBoard() {
     for (let i = 2; i < images.length; i++){
       images[i].appendChild(apples[i - 2]);
     }
+    // start MAX with the play
+    maxTurn();
   }
 }
 
@@ -183,18 +185,28 @@ function translateAnim(e) {
   let piece = offset(PLAYER);
   let dx = cell.left - piece.left;
   let dy = cell.top - piece.top;
-  console.log({dx, dy})
   PLAYER.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 
-// move only black horse
+function maxTurn() {
+  setTimeout(() => {
+    MAX = true;
+    let max = document.getElementById('wH');
+    let e = max.parentElement;
+    MOVES = possibleMove(e.id)
+    // TODO: hacer un loading para cuando se envie la petición
+    sendData();
+  }, 500);
+}
+
+// move only black horse MIN
 function movePiece(e) {
-  if (!MOVE && e.firstElementChild) {
+  if (!MOVE && e.firstElementChild && !MAX) {
     PLAYER = e.firstElementChild;
     CELL = e;
     if (PLAYER.id == 'bH') {
-
       selectHorseToMove(e);
+      console.log('BH: ' + MOVES)
       e.classList.add('lemon');
       MOVE = true;
     }
@@ -208,6 +220,8 @@ function movePiece(e) {
       removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
+      // end of shift for MIN, turn MAX
+      maxTurn();
     }
     else {
       removeStyleCell();
@@ -219,19 +233,23 @@ function movePiece(e) {
 
 // move only white horse
 function setPiece(position) {
-  let current = document.getElementById('wH').parentElement;
+  PLAYER = document.getElementById('wH');
+  let current = PLAYER.parentElement;
   CELL = current;
   selectHorseToMove(current);
   current.classList.add('lemon');
   // next position
-  // if (MOVES.indexOf(position) >= 0) {
-  setTimeout(() => {
-    let nextCell = document.getElementById(position);
-    validateMove(nextCell);
-    removeStyleCell();
-    highlightCell(MOVES, false);
-  }, 500);
-  // }
+  if (MOVES.indexOf(position) >= 0) {
+    setTimeout(() => {
+      let nextCell = document.getElementById(position);
+      translateAnim(nextCell);
+      setTimeout(() => {
+        validateMove(nextCell);
+      }, 400);
+      removeStyleCell();
+      highlightCell(MOVES, false);
+    }, 500);
+  }
 }
 // Load board
 board();
