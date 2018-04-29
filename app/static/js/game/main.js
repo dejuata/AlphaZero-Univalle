@@ -14,7 +14,6 @@ function sendData() {
   newXHR.open('POST', url);
   newXHR.setRequestHeader("Content-type", "application/json")
 
-  console.log('WH: ' + MOVES)
   let jsonData = { data: MOVES };
   let formattedJsonData = JSON.stringify(jsonData);
   newXHR.send(formattedJsonData);

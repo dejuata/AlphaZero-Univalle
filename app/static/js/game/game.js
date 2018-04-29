@@ -44,17 +44,21 @@ function positionRandom() {
 }
 
 function positionPieces(n) {
-  let position = []
+  let position = [];
+  let tmp = positionRandom();
+  let i = 0;
   position[0] = positionRandom();
-  for (let i = 1; i < n; i++){
-    let tmp = positionRandom();
+
+  while (i < n - 1) {
     if (position.indexOf(tmp) < 0) {
       position.push(tmp);
+      i++;
     }
     else {
-      position.push(positionRandom());
+      tmp = positionRandom();
     }
   }
+
   return position;
 }
 
@@ -160,8 +164,27 @@ function selectHorseToMove(e) {
 }
 
 function validateMove(e) {
-  CELL.innerHTML = "";
-  e.innerHTML = HORSE;
+  // Celda anterior
+  let child = CELL.childNodes;
+  let player = buildPieces(PLAYER.id);
+
+  for (let i = 0; i < child.length; i++){
+    if (PLAYER.id == child[i].id) {
+      CELL.removeChild(child[i]);
+    }
+  }
+  if (e.firstChild && e.firstChild.id == 'rA') {
+    e.removeChild(e.firstChild);
+    // aqui se puede hacer el contador de las manzanas
+  }
+  if (e.firstChild && e.firstChild.id != 'rA') {
+    e.classList.add('parent');
+    e.firstChild.classList.add('img1');
+    player.classList.add('img2');
+  }
+
+  e.appendChild(player);
+
 }
 
 function removeStyleCell() {
@@ -185,6 +208,12 @@ function translateAnim(e) {
   let piece = offset(PLAYER);
   let dx = cell.left - piece.left;
   let dy = cell.top - piece.top;
+
+  if (e.classList.contains('parent')) {
+    e.classList.remove('parent');
+    console.log('entro')
+  }
+
   PLAYER.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 
@@ -206,7 +235,6 @@ function movePiece(e) {
     CELL = e;
     if (PLAYER.id == 'bH') {
       selectHorseToMove(e);
-      console.log('BH: ' + MOVES)
       e.classList.add('lemon');
       MOVE = true;
     }

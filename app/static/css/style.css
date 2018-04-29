@@ -8,7 +8,6 @@
 
 .board {
   margin: 0 auto;
-  cursor: crosshair;
   margin-left: -50px;
 }
 
@@ -141,3 +140,24 @@ td {
 .opacity{
   opacity: .4;
 }
+
+/* overlay a image */
+
+.parent {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+.img1 {
+  position: relative;
+  top: 0;
+  left: -5px;
+}
+
+.img2 {
+  position: absolute;
+  top: 0;
+  left: 5px;
+}
+
