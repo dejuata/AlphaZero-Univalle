@@ -12,7 +12,7 @@
 </head>
 
 <body>
-  <div class="uk-flex uk-flex-center uk-margin-medium-top">
+  <div class="uk-flex uk-flex-center uk-margin-small-top">
     <main class="uk-padding uk-padding-remove-top">
       <h1 class="align-center">AlphaZero Univalle</h1>
       <div class="uk-card uk-card-default uk-card-body padding-left">
@@ -30,6 +30,19 @@
           </div>
         </div>
         <table id="board" class="board"></table>
+        <div class="uk-flex uk-flex-between">
+          <div class="uk-flex-middle">
+            <img class="badge-img" src="{{ url_for('static', filename = 'img/bH.png') }}" alt="bH">
+            Black Horse:
+            <span class="uk-badge">0</span>
+          </div>
+
+          <div class="uk-flex-middle">
+            <img class="badge-img" src="{{ url_for('static', filename = 'img/wH.png') }}" alt="wH">
+            White Horse:
+            <span class="uk-badge">0</span>
+          </div>
+        </div>
       </div>
     </main>
   </div>
