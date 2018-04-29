@@ -16,6 +16,9 @@
     <main class="uk-padding uk-padding-remove-top">
       <h1 class="align-center">AlphaZero Univalle</h1>
       <div class="uk-card uk-card-default uk-card-body padding-left">
+        <button id="position" name="solve" class="margin-left uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom" onclick="sendData()">
+          Position
+        </button>
         <div>
           <label class="uk-form-label" for="form-stacked-text">Select the amount of apples:</label>
           <div class="uk-form-controls uk-flex">
@@ -39,7 +42,7 @@
   <script src="{{ url_for('static', filename = 'js/jquery-1.8.3.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/uikit.min.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/game/game.js') }}"></script>
-
+  <script src="{{ url_for('static', filename = 'js/game/main.js') }}"></script>
 </body>
 
 </html>

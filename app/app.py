@@ -7,7 +7,14 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+  return render_template('index.html')
+
+@app.route('/position', methods=['POST'])
+def position():
+  if request.method == 'POST':
+    # data = request.form['data'] # no accedo a la data asi, mirar como
+    return json.dumps({'position': '11'})
+
 
 
 if __name__ == '__main__':

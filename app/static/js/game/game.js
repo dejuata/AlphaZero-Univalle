@@ -34,7 +34,7 @@ function buildPieces(piece) {
   let img = document.createElement('img');
   img.src = `/static/img/${piece}.png`;
   img.id = piece;
-  img.className = 'piece';
+  img.className = piece;
   return img;
 }
 
@@ -139,14 +139,14 @@ function possibleMove(n) {
   return result;
 }
 
-function highlightCell(position, active, style = 'highlight1') {
+function highlightCell(position, active) {
   for (let i = 0; i < position.length; i++){
     let cell = document.getElementById(position[i]);
     if (active) {
-      cell.classList.add(style);
+      cell.classList.add('highlight');
     }
     else {
-      cell.classList.remove(style);
+      cell.classList.remove('highlight');
     }
   }
 }
@@ -162,20 +162,38 @@ function validateMove(e) {
   e.innerHTML = HORSE;
 }
 
-function removeStyleCell(str) {
+function removeStyleCell() {
   let style = CELL.className.split(' ');
-  if (style.indexOf(str) >= 0) {
-    CELL.classList.remove(str);
+  if (style.indexOf('lemon') >= 0) {
+    CELL.classList.remove('lemon');
   }
+}
+
+function offset(elem) {
+  var rect = elem.getBoundingClientRect();
+
+  return {
+    top: rect.top + document.body.scrollTop,
+    left: rect.left + document.body.scrollLeft
+  }
+}
+
+function translateAnim(e) {
+  let cell = offset(e);
+  let piece = offset(PLAYER);
+  let dx = cell.left - piece.left;
+  let dy = cell.top - piece.top;
+  console.log({dx, dy})
+  PLAYER.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 
 // move only black horse
 function movePiece(e) {
   if (!MOVE && e.firstElementChild) {
-    PLAYER = e.firstElementChild.id;
+    PLAYER = e.firstElementChild;
     CELL = e;
-    console.log(e);
-    if (PLAYER == 'bH') {
+    if (PLAYER.id == 'bH') {
+
       selectHorseToMove(e);
       e.classList.add('lemon');
       MOVE = true;
@@ -183,13 +201,16 @@ function movePiece(e) {
   }
   else if (MOVE) {
     if (MOVES.indexOf(e.id) >= 0) {
-      validateMove(e);
-      removeStyleCell('lemon');
+      translateAnim(e);
+      setTimeout(() => {
+        validateMove(e);
+      }, 400);
+      removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
     }
     else {
-      removeStyleCell('lemon');
+      removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
     }
@@ -198,7 +219,19 @@ function movePiece(e) {
 
 // move only white horse
 function setPiece(position) {
-  let whiteHorse = document.getElementById('wH');
+  let current = document.getElementById('wH').parentElement;
+  CELL = current;
+  selectHorseToMove(current);
+  current.classList.add('lemon');
+  // next position
+  // if (MOVES.indexOf(position) >= 0) {
+  setTimeout(() => {
+    let nextCell = document.getElementById(position);
+    validateMove(nextCell);
+    removeStyleCell();
+    highlightCell(MOVES, false);
+  }, 500);
+  // }
 }
 // Load board
 board();
