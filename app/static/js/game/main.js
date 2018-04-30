@@ -2,9 +2,7 @@ function sendData() {
   console.log()
   function reqListener() {
     data = JSON.parse(this.response);
-    setPiece(data['position'])
-    // end of shift for MAX
-    MAX = false;
+    setPiece(data['position']);
   }
 
   let newXHR = new XMLHttpRequest();

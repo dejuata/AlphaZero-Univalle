@@ -1,4 +1,5 @@
-let MOVE, CELL, HORSE, MOVES, PLAYER, MAX
+let MOVE, CELL, MOVES, PLAYER;
+let MAX = true;
 
 // create board
 function board() {
@@ -160,7 +161,6 @@ function highlightCell(position, active) {
 function selectHorseToMove(e) {
   MOVES = possibleMove(e.id)
   highlightCell(MOVES, true);
-  HORSE = e.innerHTML;
 }
 
 function validateMove(e) {
@@ -211,7 +211,6 @@ function translateAnim(e) {
 
   if (e.classList.contains('parent')) {
     e.classList.remove('parent');
-    console.log('entro')
   }
 
   PLAYER.style.transform = `translate(${dx}px, ${dy}px)`;
@@ -219,7 +218,6 @@ function translateAnim(e) {
 
 function maxTurn() {
   setTimeout(() => {
-    MAX = true;
     let max = document.getElementById('wH');
     let e = max.parentElement;
     MOVES = possibleMove(e.id)
@@ -230,26 +228,25 @@ function maxTurn() {
 
 // move only black horse MIN
 function movePiece(e) {
-  if (!MOVE && e.firstElementChild && !MAX) {
+  if (!MOVE && e.firstElementChild.id == 'bH' && !MAX) {
     PLAYER = e.firstElementChild;
     CELL = e;
-    if (PLAYER.id == 'bH') {
-      selectHorseToMove(e);
-      e.classList.add('lemon');
-      MOVE = true;
-    }
+    selectHorseToMove(e);
+    e.classList.add('lemon');
+    MOVE = true;
   }
-  else if (MOVE) {
+  else if (MOVE && !MAX) {
     if (MOVES.indexOf(e.id) >= 0) {
       translateAnim(e);
       setTimeout(() => {
         validateMove(e);
+        // turn MAX
+        MAX = true;
+        maxTurn();
       }, 400);
       removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
-      // end of shift for MIN, turn MAX
-      maxTurn();
     }
     else {
       removeStyleCell();
@@ -273,6 +270,7 @@ function setPiece(position) {
       translateAnim(nextCell);
       setTimeout(() => {
         validateMove(nextCell);
+        MAX = false;
       }, 400);
       removeStyleCell();
       highlightCell(MOVES, false);
