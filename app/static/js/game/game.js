@@ -1,5 +1,9 @@
 let MOVE, CELL, MOVES, PLAYER, MAX = true;
-let SCORE = 0, SCORE1 = 0, SCORE2 = 0;
+let SCORE = {
+  max: 0,
+  min: 0,
+  total: 0
+};
 let SETUP = {
   img: '/static/img/',
   player: {
@@ -102,7 +106,11 @@ function emptyBoard() {
   }
   updateScoreInHtml(SETUP.score.max, 0);
   updateScoreInHtml(SETUP.score.min, 0);
-  SCORE = 0, SCORE1 = 0, SCORE2 = 0;
+  SCORE = {
+    max: 0,
+    min: 0,
+    total: 0
+  }
 }
 
 function buildApples(n) {
@@ -117,7 +125,7 @@ function start(n, callback) {
   // clear board
   emptyBoard();
   // init score
-  SCORE = n;
+  SCORE.total = n;
 
   let whiteHorse = buildPieces(SETUP.player.max);
   let blackHorse = buildPieces(SETUP.player.min);
@@ -181,22 +189,24 @@ function selectHorseToMove(e) {
 
 function score(player) {
   if (player == SETUP.player.max) {
-    SCORE1++;
-    SCORE--;
-    updateScoreInHtml(SETUP.score.max, SCORE1);
+    SCORE.max++;
+    SCORE.total--;
+    updateScoreInHtml(SETUP.score.max, SCORE.max);
   }
-  else if (player == SETUP.player.min) {
-    SCORE2++;
-    SCORE--;
-    updateScoreInHtml(SETUP.score.min, SCORE2);
+  if (player == SETUP.player.min) {
+    SCORE.min++;
+    SCORE.total--;
+    updateScoreInHtml(SETUP.score.min, SCORE.min);
   }
-  if (SCORE == 0) {
-    if (SCORE1 > SCORE2) {
-      alert('el ganador es MAX');
-    }
-    else {
-      alert('el ganador es MIN');
-    }
+  winner();
+}
+
+function winner() {
+  if (SCORE.total == 0) {
+    let title = document.getElementById('winner-title');
+    let win = SCORE.max < SCORE.min ? '🎉 ¡You Win! 🎉 ': '💩 ¡You Lose! 💩';
+    title.innerText = win;
+    UIkit.modal('#winner').show();
   }
 }
 
@@ -204,6 +214,7 @@ function updateScoreInHtml(id, score) {
   let el = document.getElementById(id);
   el.innerText = score;
 }
+
 function validateMove(e) {
   // Celda anterior
   let child = CELL.childNodes;
@@ -256,7 +267,7 @@ function translateAnim(e) {
 
 // Esta funcion toca eliminarla
 function maxTurn() {
-  if (SCORE > 0) {
+  if (SCORE.total > 0) {
     let max = document.getElementById(SETUP.player.max);
     let e = max.parentElement;
     MOVES = possibleMove(e.id)

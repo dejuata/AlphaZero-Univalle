@@ -12,6 +12,16 @@ function insertPiecestoBoard() {
 // insert pieces
 insertPiecestoBoard();
 
+function playAgain() {
+  let btn = document.getElementById('again');
+  btn.onclick = () => {
+    let apples = document.getElementById("apples").value;
+    start(apples, () => setTimeout(() => maxTurn(), 500));
+  }
+}
+
+playAgain();
+
 function sendData() {
   function reqListener() {
     data = JSON.parse(this.response);

@@ -48,8 +48,31 @@
       </div>
     </main>
   </div>
+
   <div class="modal">
   </div>
+
+  <!-- This is the modal -->
+  <div id="winner" class="uk-flex-top" uk-modal>
+    <div class="uk-modal-dialog uk-margin-auto-vertical">
+      <div class="uk-modal-header uk-text-center">
+        <h2 id="winner-title" class="uk-modal-title"></h2>
+      </div>
+      <div class="uk-modal-body uk-text-center">
+        <p id="winner-body">
+        ¿Cuál es el truco mágico que nos hace inteligentes? El truco es que no hay truco. El poder de la inteligencia emana de nuestra
+        vasta diversidad, no de un único y perfecto principio"
+        </p>
+        <p>Marvin Minsky</p>
+      </div>
+      <div class="uk-modal-footer uk-text-right">
+        <button id="again" class="uk-button uk-button-primary uk-modal-close" type="button">
+          Play Again!
+        </button>
+      </div>
+    </div>
+  </div>
+
 
   <script src="{{ url_for('static', filename = 'js/uikit.min.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/game/game.js') }}"></script>
