@@ -1,9 +1,29 @@
-let MOVE, CELL, MOVES, PLAYER;
-let MAX = true;
+let MOVE, CELL, MOVES, PLAYER, MAX = true;
+let SCORE = 0, SCORE1 = 0, SCORE2 = 0;
+let SETUP = {
+  img: '/static/img/',
+  player: {
+    max: 'wN',
+    min: 'bN',
+  },
+  apple: 'rA',
+  score: {
+    max: 'scoreWN',
+    min: 'scoreBN',
+  },
+  css: {
+    cell: {
+      white: 'white',
+      black: 'black',
+      highlight: 'highlight',
+      lemon: 'lemon'
+    }
+  }
+};
 
 // create board
-function board() {
-  let board = document.getElementById("board");
+function board(id) {
+  let board = document.getElementById(id);
   let columns = ' abcdef'.split('');
 
   for (let i = 7; i > 0; i--) {
@@ -20,10 +40,10 @@ function board() {
       }
       else {
         let color = '';
-        if (i % 2 == 0 && j % 2 != 0) color = 'white';
-        if (i % 2 != 0 && j % 2 != 0) color = 'black';
-        if (i % 2 == 0 && j % 2 == 0) color = 'black';
-        if (i % 2 != 0 && j % 2 == 0) color = 'white';
+        if (i % 2 == 0 && j % 2 != 0) color = SETUP.css.cell.white;
+        if (i % 2 != 0 && j % 2 != 0) color = SETUP.css.cell.black;
+        if (i % 2 == 0 && j % 2 == 0) color = SETUP.css.cell.black;
+        if (i % 2 != 0 && j % 2 == 0) color = SETUP.css.cell.white;
         // id : row, column
         cell.innerHTML = `<div class="cell ${color}" id=${i - 2}${j - 1} onclick="movePiece(this)"> </div>`;
       }
@@ -33,7 +53,7 @@ function board() {
 
 function buildPieces(piece) {
   let img = document.createElement('img');
-  img.src = `/static/img/${piece}.png`;
+  img.src = `${SETUP.img}${piece}.png`;
   img.id = piece;
   img.className = piece;
   return img;
@@ -59,7 +79,6 @@ function positionPieces(n) {
       tmp = positionRandom();
     }
   }
-
   return position;
 }
 
@@ -75,50 +94,47 @@ function buildImages(position) {
 function emptyBoard() {
   for (let i = 0; i < 6; i++){
     for (let j = 0; j < 6; j++){
-      let cell = `${i}${j}`;
-      let div = document.getElementById(cell);
+      let div = document.getElementById(`${i}${j}`);
       while (div.firstChild) {
         div.removeChild(div.firstChild);
       }
     }
   }
+  updateScoreInHtml(SETUP.score.max, 0);
+  updateScoreInHtml(SETUP.score.min, 0);
+  SCORE = 0, SCORE1 = 0, SCORE2 = 0;
 }
 
 function buildApples(n) {
   let apples = [];
   for (let i = 0; i < n; i++){
-    apples.push(buildPieces('rA'));
+    apples.push(buildPieces(SETUP.apple));
   }
   return apples;
 }
 
-function numberApple() {
-  return document.getElementById("apples").value;
-}
+function start(n, callback) {
+  // clear board
+  emptyBoard();
+  // init score
+  SCORE = n;
 
-function insertPiecestoBoard() {
-  let btn = document.getElementById('play');
+  let whiteHorse = buildPieces(SETUP.player.max);
+  let blackHorse = buildPieces(SETUP.player.min);
+  let apples = buildApples(parseInt(n));
 
-  btn.onclick = () => {
-    let whiteHorse = buildPieces('wH');
-    let blackHorse = buildPieces('bH');
-    let apples = buildApples(parseInt(numberApple()));
+  // get position random
+  let position = positionPieces(parseInt(n) + 2);
+  let images = buildImages(position);
 
-    // clear board
-    emptyBoard();
-    // get position random
-    let position = positionPieces(parseInt(numberApple()) + 2);
-    let images = buildImages(position);
+  images[0].appendChild(whiteHorse);
+  images[1].appendChild(blackHorse);
 
-    images[0].appendChild(whiteHorse);
-    images[1].appendChild(blackHorse);
-
-    for (let i = 2; i < images.length; i++){
-      images[i].appendChild(apples[i - 2]);
-    }
-    // start MAX with the play
-    maxTurn();
+  for (let i = 2; i < images.length; i++) {
+    images[i].appendChild(apples[i - 2]);
   }
+  // start MAX with the play
+  callback()
 }
 
 function possibleMove(n) {
@@ -150,10 +166,10 @@ function highlightCell(position, active) {
   for (let i = 0; i < position.length; i++){
     let cell = document.getElementById(position[i]);
     if (active) {
-      cell.classList.add('highlight');
+      cell.classList.add(SETUP.css.cell.highlight);
     }
     else {
-      cell.classList.remove('highlight');
+      cell.classList.remove(SETUP.css.cell.highlight);
     }
   }
 }
@@ -163,6 +179,31 @@ function selectHorseToMove(e) {
   highlightCell(MOVES, true);
 }
 
+function score(player) {
+  if (player == SETUP.player.max) {
+    SCORE1++;
+    SCORE--;
+    updateScoreInHtml(SETUP.score.max, SCORE1);
+  }
+  else if (player == SETUP.player.min) {
+    SCORE2++;
+    SCORE--;
+    updateScoreInHtml(SETUP.score.min, SCORE2);
+  }
+  if (SCORE == 0) {
+    if (SCORE1 > SCORE2) {
+      alert('el ganador es MAX');
+    }
+    else {
+      alert('el ganador es MIN');
+    }
+  }
+}
+
+function updateScoreInHtml(id, score) {
+  let el = document.getElementById(id);
+  el.innerText = score;
+}
 function validateMove(e) {
   // Celda anterior
   let child = CELL.childNodes;
@@ -173,30 +214,28 @@ function validateMove(e) {
       CELL.removeChild(child[i]);
     }
   }
-  if (e.firstChild && e.firstChild.id == 'rA') {
+  if (e.firstChild && e.firstChild.id == SETUP.apple) {
     e.removeChild(e.firstChild);
-    // aqui se puede hacer el contador de las manzanas
+    score(PLAYER.id);
   }
-  if (e.firstChild && e.firstChild.id != 'rA') {
+  if (e.firstChild && e.firstChild.id != SETUP.apple) {
     e.classList.add('parent');
     e.firstChild.classList.add('img1');
     player.classList.add('img2');
   }
 
   e.appendChild(player);
-
 }
 
 function removeStyleCell() {
   let style = CELL.className.split(' ');
-  if (style.indexOf('lemon') >= 0) {
-    CELL.classList.remove('lemon');
+  if (style.indexOf(SETUP.css.cell.lemon) >= 0) {
+    CELL.classList.remove(SETUP.css.cell.lemon);
   }
 }
 
 function offset(elem) {
-  var rect = elem.getBoundingClientRect();
-
+  let rect = elem.getBoundingClientRect();
   return {
     top: rect.top + document.body.scrollTop,
     left: rect.left + document.body.scrollLeft
@@ -212,27 +251,28 @@ function translateAnim(e) {
   if (e.classList.contains('parent')) {
     e.classList.remove('parent');
   }
-
   PLAYER.style.transform = `translate(${dx}px, ${dy}px)`;
 }
 
+// Esta funcion toca eliminarla
 function maxTurn() {
-  setTimeout(() => {
-    let max = document.getElementById('wH');
+  if (SCORE > 0) {
+    let max = document.getElementById(SETUP.player.max);
     let e = max.parentElement;
     MOVES = possibleMove(e.id)
     // TODO: hacer un loading para cuando se envie la petición
     sendData();
-  }, 500);
+  }
 }
 
 // move only black horse MIN
 function movePiece(e) {
-  if (!MOVE && e.firstElementChild.id == 'bH' && !MAX) {
+  // pequeño problema con e.firstElementChild es definido como null
+  if (!MOVE && e.firstElementChild.id == SETUP.player.min && !MAX) {
     PLAYER = e.firstElementChild;
     CELL = e;
     selectHorseToMove(e);
-    e.classList.add('lemon');
+    e.classList.add(SETUP.css.cell.lemon);
     MOVE = true;
   }
   else if (MOVE && !MAX) {
@@ -258,11 +298,11 @@ function movePiece(e) {
 
 // move only white horse
 function setPiece(position) {
-  PLAYER = document.getElementById('wH');
+  PLAYER = document.getElementById(SETUP.player.max);
   let current = PLAYER.parentElement;
   CELL = current;
   selectHorseToMove(current);
-  current.classList.add('lemon');
+  current.classList.add(SETUP.css.cell.lemon);
   // next position
   if (MOVES.indexOf(position) >= 0) {
     setTimeout(() => {
@@ -277,9 +317,6 @@ function setPiece(position) {
     }, 500);
   }
 }
-// Load board
-board();
-// insert random pieces
-insertPiecestoBoard();
+
 
 

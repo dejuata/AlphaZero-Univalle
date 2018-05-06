@@ -103,7 +103,8 @@ td {
   font-size: 14px;
 }
 
-.bH, .wH {
+.bN,
+.wN {
   height: 100%;
   width: 100%;
   transition: all .2s ease;
@@ -126,18 +127,18 @@ td {
   cursor: pointer;
 }
 
-#bH:hover {
+#bN:hover {
   cursor: -ms-grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
   cursor: pointer;
 }
 
-.lemon{
+.lemon {
   background-color: #aaa23a !important;
 }
 
-.opacity{
+.opacity {
   opacity: .4;
 }
 
@@ -163,13 +164,9 @@ td {
   transition: all .2s ease;
 }
 
-.badge-img{
+.badge-img {
   height: 1.5rem;
   width: 1.5rem;
   top: -3px;
   position: relative;
 }
-
-}
-
-

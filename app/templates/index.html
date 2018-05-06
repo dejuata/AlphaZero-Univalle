@@ -23,24 +23,26 @@
               <option value="1">1</option>
               <option value="3">3</option>
               <option value="5">5</option>
+              <option value="7">7</option>
+              <option value="9">9</option>
             </select>
             <button id="play" name="solve" class="margin-left uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
               Play
             </button>
           </div>
         </div>
+
         <table id="board" class="board"></table>
+
         <div class="uk-flex uk-flex-between">
           <div class="uk-flex-middle">
-            <img class="badge-img" src="{{ url_for('static', filename = 'img/bH.png') }}" alt="bH">
-            Black Horse:
-            <span class="uk-badge">0</span>
+            <img class="badge-img" src="{{ url_for('static', filename = 'img/bN.png') }}" alt="bN"> Black Horse:
+            <span id="scoreBN" class="uk-badge">0</span>
           </div>
 
           <div class="uk-flex-middle">
-            <img class="badge-img" src="{{ url_for('static', filename = 'img/wH.png') }}" alt="wH">
-            White Horse:
-            <span class="uk-badge">0</span>
+            <img class="badge-img" src="{{ url_for('static', filename = 'img/wN.png') }}" alt="wN"> White Horse:
+            <span id="scoreWN" class="uk-badge">0</span>
           </div>
         </div>
       </div>
@@ -49,10 +51,9 @@
   <div class="modal">
   </div>
 
-  <script src="{{ url_for('static', filename = 'js/jquery-1.8.3.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/uikit.min.js') }}"></script>
   <script src="{{ url_for('static', filename = 'js/game/game.js') }}"></script>
-  <script src="{{ url_for('static', filename = 'js/game/main.js') }}"></script>
+  <script src="{{ url_for('static', filename = 'js/main.js') }}"></script>
 </body>
 
 </html>
