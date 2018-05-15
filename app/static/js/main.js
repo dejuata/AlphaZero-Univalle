@@ -27,7 +27,7 @@ function sendData() {
     data = JSON.parse(this.response);
     setPiece(data['position']);
   }
-
+  console.log(getState());
   let newXHR = new XMLHttpRequest();
   let url = `${document.location.origin}/position`;
 

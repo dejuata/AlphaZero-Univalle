@@ -329,5 +329,19 @@ function setPiece(position) {
   }
 }
 
+function getState(){
+  let apples = Array.from(document.getElementsByClassName('rA'));
+  
+  return {
+    'players':[
+      document.getElementById('wN').parentElement.id,
+      document.getElementById('bN').parentElement.id
+    ],
+    'score': SCORE,
+    'moves': MOVES,
+    'apples': apples.map(x => x.parentElement.id)
+  }
+}
+
 
 
