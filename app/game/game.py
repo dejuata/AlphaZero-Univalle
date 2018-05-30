@@ -8,9 +8,6 @@ class Game(object):
     def __repr__(self):
         return '<{}>'.format(self.__class__.__name__)
 
-    def __init__(self, initial):
-        self.initial = initial
-
     def actions(self, state):
         return state.moves
 
@@ -23,9 +20,13 @@ class Game(object):
         else:
             board = deepcopy(state.board)
             position = board['players'][1] if state.to_move == 'max' else board['players'][0]
+            
+            catch = False
 
             if move in state.board['apples']:
                 board['apples'].remove(move)
+                catch = True
+
                 if state.to_move == 'max':
                     board['score']['max'] += 1
                     board['score']['total'] -= 1
@@ -41,37 +42,34 @@ class Game(object):
             # creo que se deben calcular los movimientos de max y min
             return GameState(
                             to_move=('min' if state.to_move == 'max' else 'max'),
-                            utility=self.compute_utility(board, move, state.to_move),
+                            utility=self.compute_utility(catch, state.to_move, state.utility),
                             board=board, 
-                            moves=self.possible_move(position)
+                            moves=self.possible_move(position) if board['score']['total'] > 0 else []
                         )
 
-    def compute_utility(self, board, move, player):
+    def compute_utility(self, catch, player, utility):
         """
         If max wins with this move, return 1; 
         if min wins return -1; else return 0.
         """
-        apples = tuple(board['apples'])
-        score = board['score']
-
-        if len(apples) == 0 and score['max'] > score['min'] and score['total'] == 0 and player == 'max':
-            return 1
-        elif len(apples) == 0 and score['max'] < score['min'] and score['total'] == 0 and player == 'min':
-            return -1
-
-        return 0
-
-    def utility(self, state, player):
+        if player == 'max' and catch:
+            return utility + 1
+        elif player == 'min' and catch:
+            return utility - 1
+        else:
+            return utility
+            
+    def utility(self, state):
         """
-        Return the value to player; 1 for win, -1 for loss, 0 otherwise.
+        Return the value to player
         """
-        return state.utility if player == 'max' else -state.utility
+        return state.utility
 
     def terminal_test(self, state):
         """
         A state is terminal if it is won or there are no apples.
         """
-        return state.utility != 0
+        return len(state.board['apples']) == 0
 
     def to_move(self, state):
         """

@@ -121,18 +121,18 @@ function buildApples(n) {
   return apples;
 }
 
-function start(n, callback) {
+function start(n, positionRandom, callback) {
   // clear board
   emptyBoard();
   // init score
-  SCORE.total = n;
-
+  SCORE.total = parseInt(n);
   let whiteHorse = buildPieces(SETUP.player.max);
   let blackHorse = buildPieces(SETUP.player.min);
   let apples = buildApples(parseInt(n));
 
   // get position random
-  let position = positionPieces(parseInt(n) + 2);
+  let position = positionRandom;
+  if (position.length == 0) position = positionPieces(parseInt(n) + 2);
   let images = buildImages(position);
 
   images[0].appendChild(whiteHorse);
@@ -201,6 +201,22 @@ function score(player) {
   winner();
 }
 
+function theft(player) {
+  if (player == SETUP.player.max) {
+    SCORE.max += SCORE.min;
+    SCORE.min = 0;
+    updateScoreInHtml(SETUP.score.max, SCORE.max);
+    updateScoreInHtml(SETUP.score.min, SCORE.min);
+  }
+  if (player == SETUP.player.min) {
+    SCORE.min += SCORE.max;
+    SCORE.max = 0;
+    updateScoreInHtml(SETUP.score.max, SCORE.max);
+    updateScoreInHtml(SETUP.score.min, SCORE.min);
+  }
+  winner();
+}
+
 function winner() {
   if (SCORE.total == 0) {
     let title = document.getElementById('winner-title');
@@ -229,10 +245,12 @@ function validateMove(e) {
     e.removeChild(e.firstChild);
     score(PLAYER.id);
   }
-  if (e.firstChild && e.firstChild.id != SETUP.apple) {
+  // robo
+  if (e.firstChild && e.firstChild.id != SETUP.apple) {    
     e.classList.add('parent');
     e.firstChild.classList.add('img1');
     player.classList.add('img2');
+    theft(PLAYER.id);
   }
 
   e.appendChild(player);
@@ -272,7 +290,7 @@ function maxTurn() {
     let e = max.parentElement;
     MOVES = possibleMove(e.id)
     // TODO: hacer un loading para cuando se envie la petición
-    sendData();
+    sendData('position', getState());
   }
 }
 
@@ -333,13 +351,15 @@ function getState(){
   let apples = Array.from(document.getElementsByClassName('rA'));
   
   return {
-    'players':[
-      document.getElementById('wN').parentElement.id,
-      document.getElementById('bN').parentElement.id
-    ],
-    'score': SCORE,
+    'state': {
+      'players':[
+        document.getElementById('wN').parentElement.id,
+        document.getElementById('bN').parentElement.id
+      ],
+      'score': SCORE,
+      'apples': apples.map(x => x.parentElement.id)
+    },
     'moves': MOVES,
-    'apples': apples.map(x => x.parentElement.id)
   }
 }
 

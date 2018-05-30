@@ -3,6 +3,11 @@
 import os
 import random
 from flask import Flask, render_template, request, json
+from collections import namedtuple
+from game.game import Game
+from game.minimax import alphabeta_cutoff_search
+
+GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
 app = Flask(__name__)
 
@@ -15,12 +20,12 @@ def position():
     if request.method == 'POST':
         request_json = request.get_json()
         data = request_json['data']
-        position = random_position(data)
+        position = minimax(data)
         return json.dumps({'position': position})
 
-def random_position(lst):
-    i = random.random() * len(lst)
-    return lst[int(i)]
+def minimax(data):
+    state = GameState(to_move='max', utility=0, board=data['state'], moves=data['moves'])
+    return alphabeta_cutoff_search(state, Game())
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
