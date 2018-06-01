@@ -25,6 +25,9 @@
               <option value="5">5</option>
               <option value="7">7</option>
               <option value="9">9</option>
+              <option value="11">11</option>
+              <option value="13">13</option>
+              <option value="15">15</option>
             </select>
             <button id="play" name="solve" class="margin-left uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
               Play
@@ -36,17 +39,16 @@
 
         <div class="uk-flex uk-flex-between">
           <div class="uk-flex-middle">
-            <img class="badge-img" src="{{ url_for('static', filename = 'img/bN.png') }}" alt="bN"> Black Horse:
-            <span id="scoreBN" class="uk-badge">0</span>
-          </div>
-
-          <div class="uk-flex-middle">
             <img class="badge-img" src="{{ url_for('static', filename = 'img/wN.png') }}" alt="wN"> White Horse:
             <span id="scoreWN" class="uk-badge">0</span>
           </div>
+          <div class="uk-flex-middle">
+            <img class="badge-img" src="{{ url_for('static', filename = 'img/bN.png') }}" alt="bN"> Black Horse:
+            <span id="scoreBN" class="uk-badge">0</span>
+          </div>
         </div>
 
-        <div class="uk-padding uk-padding-remove-horizontal">         
+        <div class="uk-padding uk-padding-remove-horizontal">
           <form id="uploadForm">
             <div uk-form-custom class="div-large" id="fileInput">
               <input type="file" name="file" accept=".txt" id="file">
@@ -54,7 +56,7 @@
             </div>
             <input type="submit" value="Upload" id="upload" class="uk-button uk-button-primary uk-width-1-1 uk-margin-small-bottom">
           </form>
-        </div>    
+        </div>
       </div>
     </main>
   </div>
@@ -70,8 +72,8 @@
       </div>
       <div class="uk-modal-body uk-text-center">
         <p id="winner-body">
-        ¿Cuál es el truco mágico que nos hace inteligentes? El truco es que no hay truco. El poder de la inteligencia emana de nuestra
-        vasta diversidad, no de un único y perfecto principio"
+          ¿Cuál es el truco mágico que nos hace inteligentes? El truco es que no hay truco. El poder de la inteligencia emana de nuestra
+          vasta diversidad, no de un único y perfecto principio"
         </p>
         <p>Marvin Minsky</p>
       </div>

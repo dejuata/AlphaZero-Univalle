@@ -18,35 +18,52 @@ class Game(object):
         if move not in state.moves:
             return state
         else:
-            board = deepcopy(state.board)
+            board = deepcopy(state.board)            
             position = board['players'][1] if state.to_move == 'max' else board['players'][0]
-            
             catch = False
 
+            # Capturar manzanas
             if move in state.board['apples']:
-                board['apples'].remove(move)
-                catch = True
+                catch = self.catch_apples(state, board, move)
 
-                if state.to_move == 'max':
-                    board['score']['max'] += 1
-                    board['score']['total'] -= 1
-                else:
-                    board['score']['min'] += 1
-                    board['score']['total'] -= 1
-            
             if state.to_move == 'max':
                 board['players'][0] = move
             else:
                 board['players'][1] = move
 
-            # creo que se deben calcular los movimientos de max y min
+            to_move = 'min' if state.to_move == 'max' else 'max'
+            utility = self.compute_utility(catch, state.to_move, state.utility)
+            next_position = self.sort_moves(board['apples'], self.possible_move(position))
+            print(board)
             return GameState(
-                            to_move=('min' if state.to_move == 'max' else 'max'),
-                            utility=self.compute_utility(catch, state.to_move, state.utility),
-                            board=board, 
-                            moves=self.possible_move(position) if board['score']['total'] > 0 else []
-                        )
+                to_move=to_move,
+                utility=utility,
+                board=board, 
+                moves=next_position if board['score']['total'] > 0 and len(board['apples']) > 0 else []
+            )
 
+    def catch_apples(self, state, board, move):
+        board['apples'].remove(move)
+
+        if state.to_move == 'max':
+            board['score']['max'] += 1
+            board['score']['total'] -= 1
+        elif state.to_move == 'min':
+            board['score']['min'] += 1
+            board['score']['total'] -= 1
+
+        return True
+
+    def sort_moves(self, apples, moves):
+        init = list()
+        last = list()
+        for m in moves:
+            if m in apples:
+                init.append(m)
+            else:
+                last.append(m)            
+        return init + last
+    
     def compute_utility(self, catch, player, utility):
         """
         If max wins with this move, return 1; 
@@ -105,3 +122,15 @@ class Game(object):
             if col <= 5 and col >= 1: result.append("{}{}".format(row - 2, col - 1))
 
         return result
+
+    def set_position_player(self, player, board):
+        pass
+
+        # elif move == position:
+                
+            #     if state.to_move == 'max':
+            #         board['score']['max'] += board['score']['min']
+            #         board['score']['min'] = 0
+            #     else:
+            #         board['score']['min'] += board['score']['max']
+            #         board['score']['max'] = 0

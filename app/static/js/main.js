@@ -5,8 +5,11 @@ function insertPiecestoBoard() {
   let btn = document.getElementById('play')
 
   btn.onclick = () => {
+    STATE = [];
     let apples = document.getElementById("apples").value;
-    start(apples, [], () => setTimeout(() => maxTurn(), 500));
+    start(apples, [], () => setTimeout(() => {      
+      maxTurn()
+    }, 500));
   }
 }
 // insert pieces
@@ -15,6 +18,7 @@ insertPiecestoBoard();
 function playAgain() {
   let btn = document.getElementById('again');
   btn.onclick = () => {
+    STATE = [];
     let apples = document.getElementById("apples").value;
     start(apples, [], () => setTimeout(() => maxTurn(), 500));
   }
@@ -23,11 +27,6 @@ function playAgain() {
 playAgain();
 
 function sendData(endpoint, info) {
-  function reqListener() {
-    data = JSON.parse(this.response);
-    setPiece(data['position']);
-  }
-
   let newXHR = new XMLHttpRequest();
   let url = `${document.location.origin}/${endpoint}`;
 
@@ -35,10 +34,30 @@ function sendData(endpoint, info) {
   newXHR.open('POST', url);
   newXHR.setRequestHeader("Content-type", "application/json")
 
-  let jsonData = { data: info };
-  // console.log(jsonData)
+  let jsonData = { data: info };  
+ 
   let formattedJsonData = JSON.stringify(jsonData);
   newXHR.send(formattedJsonData);
+
+  function reqListener() {
+    let data = JSON.parse(this.response);
+    let position = data['position'];
+
+    // if(!avoidReturning(position, STATE, SCORE)){
+    //   setPiece(position, () => {
+    //     STATE.push(getState());      
+    //     console.log(STATE)
+    //   });
+    // } else {
+    //   removeElement(MOVES, position)
+    //   sendData('position', getState())
+    // }    
+    setPiece(position, () => {
+      STATE.push(getState());      
+      console.log(STATE)
+    });
+    console.log(position)   
+  }
 }
 
 document.getElementById('upload').style.display = 'none';
@@ -78,8 +97,7 @@ form.addEventListener("submit", function (event) {
     reader.readAsText(file);
     reader.addEventListener('load', function(e){
       let data = e.target.result;
-      loadState(data);
-      sendData('upload', data);
+      loadState(data);      
     })
   }
 });
@@ -129,7 +147,23 @@ function loadState(data) {
     updateScoreInHtml(SETUP.score.max, SCORE.max);
     updateScoreInHtml(SETUP.score.min, SCORE.min);
     
-    // setTimeout(() => maxTurn(), 500);
+    setTimeout(() => {
+      maxTurn();
+      STATE = [];
+    }, 500);
   })
+}
 
+function avoidReturning(position, states, score){
+  for(let i = 0; i < states.length; i++){
+    if(states[i]['state']['players'][0] == position && score == states[i]['state']['score']){
+      return true;
+    }
+  }
+  return false;
+}
+
+function removeElement(array, element){
+  let index = array.indexOf(element);
+  if (index > -1) return array.splice(index, 1);
 }

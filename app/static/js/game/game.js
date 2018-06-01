@@ -1,4 +1,6 @@
 let MOVE, CELL, MOVES, PLAYER, MAX = true;
+let STATE = [];
+
 let SCORE = {
   max: 0,
   min: 0,
@@ -200,7 +202,7 @@ function score(player) {
   }
   winner();
 }
-
+// Robo
 function theft(player) {
   if (player == SETUP.player.max) {
     SCORE.max += SCORE.min;
@@ -250,7 +252,8 @@ function validateMove(e) {
     e.classList.add('parent');
     e.firstChild.classList.add('img1');
     player.classList.add('img2');
-    theft(PLAYER.id);
+    // Robo
+    // theft(PLAYER.id);
   }
 
   e.appendChild(player);
@@ -326,7 +329,7 @@ function movePiece(e) {
 }
 
 // move only white horse
-function setPiece(position) {
+function setPiece(position, callback) {
   PLAYER = document.getElementById(SETUP.player.max);
   let current = PLAYER.parentElement;
   CELL = current;
@@ -339,12 +342,13 @@ function setPiece(position) {
       translateAnim(nextCell);
       setTimeout(() => {
         validateMove(nextCell);
-        MAX = false;
+        MAX = false;       
       }, 400);
       removeStyleCell();
       highlightCell(MOVES, false);
     }, 500);
   }
+  callback();
 }
 
 function getState(){

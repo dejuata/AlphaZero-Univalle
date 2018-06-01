@@ -1,69 +1,64 @@
 from collections import namedtuple
 from game.game import Game
-from game.minimax import minimax_decision, alphabeta_cutoff_search
+from game.minimax import minimax_decision, minimax_decision1
 from copy import deepcopy
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
 data =  {
-    'players':['52', '33'],
+    'players':['03', '23'],
     'score': {
-        'max': 1,
-        'min': 0,
+        'max': 3,
+        'min': 5,
         'total': 2
     },
-    'apples': ['40', '43']
+    'apples': ['05']
 }
 
-moves = ['40', '33', '44', '31']
+moves = ['15', '11', '24', '22']
 
 # Estado incial
-initial = GameState(to_move='max', utility=0, board=data, moves=moves)
+state = GameState(to_move='max', utility=0, board=data, moves=moves)
 game = Game()
 
-# decision = minimax_decision(initial, game)
-decision = alphabeta_cutoff_search(initial, game)
+# print(game.sort_moves(data['apples'], moves))
+decision = minimax_decision1(state, game)
 print(decision)
-# import sys
-# print(sys.getrecursionlimit())
 
-# print(game.result(initial, '13'))
-# print(game.result(initial, '22'))
-# print(game.result(initial, '20'))
+# def sort_moves_h(['44', '40', '33', '31'], '43'):
+    
+#     pass
+    
 
-# for i in range(10000000):
-#     lst = deepcopy(data)
-#     print(id(lst))
-# lst = deepcopy(data)
-# print(id(lst))
-# lst = deepcopy(data)
-# print(id(lst))
+# first = game.result(state, '15')
+# print(first)
 
-# second = GameState(to_move='min', utility=1, board={'players': ['22', '21'], 'score': {'max': 1, 'total': 2, 'min': 0}, 'apples': ['52', '10']}, moves=['33', '13', '42', '40', '02', '00'])
+# second = GameState(to_move='min', utility=0, board={'players': ['15', '23'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['35', '31', '15', '11', '44', '42', '04', '02'])
+# print('second', game.result(second, '11'))
 
-# print(game.result(second, '00'))
+# third = GameState(to_move='max', utility=0, board={'players': ['15', '11'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['23', '03', '34'])
+# print('third', game.result(third, '34'))
 
-# third = GameState(to_move='max', utility=1, board={'players': ['22', '00'], 'score': {'max': 1, 'total': 2, 'min': 0}, 'apples': ['52', '10']}, moves=['34', '30', '14', '10', '43', '41', '03', '01'])
+# four = GameState(to_move='min', utility=0, board={'players': ['34', '11'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['23', '03', '32', '30'])
+# print('four', game.result(four, '03'))
 
-# print(game.result(third, '10'))
+# five = GameState(to_move='max', utility=0, board={'players': ['34', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['42', '22', '55', '53', '15', '13'])
+# print('five', game.result(five, '13'))
 
-# four = GameState(to_move='min', utility=2, board={'players': ['10', '00'], 'score': {'max': 2, 'total': 1, 'min': 0}, 'apples': ['52']}, moves=['12', '21'])
+# six = GameState(to_move='min', utility=0, board={'players': ['13', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['15', '11', '24', '22'])
+# print('six', game.result(six, '24'))
 
-# print(game.result(four, '12'))
+# seven = GameState(to_move='max', utility=0, board={'players': ['13', '24'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['05', '25', '21', '01', '34', '32'])
+# print('seven', game.result(seven, '05'))
 
-# five = GameState(to_move='max', utility=2, board={'players': ['10', '12'], 'score': {'max': 2, 'total': 1, 'min': 0}, 'apples': ['52']}, moves=['22', '02', '31'])
+# eight = GameState(to_move='min', utility=1, board={'players': ['05', '24'], 'score': {'max': 4, 'total': 1, 'min': 5}, 'apples': []}, moves=['32', '12', '45', '43', '05', '03'])
+# print('eight', game.result(eight, '32'))
 
-# print(game.result(five, '31'))
+# eight = GameState(to_move='min', utility=0, board={'players': ['13', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['15', '23']}, moves=['15', '11', '24', '22'])
+# print('eight', game.result(eight, '15'))
 
-# six = GameState(to_move='min', utility=2, board={'players': ['31', '12'], 'score': {'max': 2, 'total': 1, 'min': 0}, 'apples': ['52']}, moves=['24', '20', '04', '00', '33', '31'])
+# nine = GameState(to_move='max', utility=-1, board={'players': ['13', '15'], 'score': {'max': 3, 'total': 1, 'min': 6}, 'apples': ['23']}, moves=['25', '21', '05', '01', '34', '32'])
+# print('nine', game.result(nine, '25'))
 
-# print(game.result(six, '31'))
-
-# seven = GameState(to_move='max', utility=2, board={'players': ['31', '31'], 'score': {'max': 2, 'total': 1, 'min': 0}, 'apples': ['52']}, moves=['43', '23', '52', '50', '12', '10'])
-
-# print(game.result(seven, '52'))
-
-# eight = GameState(to_move='min', utility=3, board={'players': ['52', '31'], 'score': {'max': 3, 'total': 0, 'min': 0}, 'apples': []}, moves=[])
-
-# print(game.terminal_test(eight))
-# print(game.utility(eight))
+# ten = GameState(to_move='min', utility=-1, board={'players': ['25', '15'], 'score': {'max': 3, 'total': 1, 'min': 6}, 'apples': ['23']}, moves=['23', '03','34'])
+# print('ten', game.result(ten, '23'))

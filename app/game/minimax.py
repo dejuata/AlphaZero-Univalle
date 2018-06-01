@@ -1,36 +1,6 @@
 infinity = float('inf')
 
-def minimax_decision(state, game):
-    """
-    Given a state in a game, calculate the best move by searching
-    forward all the way to the terminal states
-    """
-
-    player = game.to_move(state)
-
-    def max_value(state):
-        if game.terminal_test(state):
-            return game.utility(state)
-        v = -infinity
-        
-        for a in game.actions(state):
-            v = max(v, min_value(game.result(state, a)))
-        return v
-
-    def min_value(state):
-        if game.terminal_test(state):
-            return game.utility(state)
-        v = infinity
-        for a in game.actions(state):
-            v = min(v, max_value(game.result(state, a)))
-        return v
-
-    # Body of minimax_decision:
-    return max(game.actions(state), 
-                key=lambda a: min_value(game.result(state, a)))
-
-
-def alphabeta_cutoff_search(state, game, d=8, cutoff_test=None, eval_fn=None):
+def minimax_decision1(state, game, d=8, cutoff_test=None, eval_fn=None):
     """Search game to determine best action; use alpha-beta pruning.
     This version cuts off search and uses an evaluation function."""
 
@@ -66,13 +36,74 @@ def alphabeta_cutoff_search(state, game, d=8, cutoff_test=None, eval_fn=None):
     cutoff_test = (cutoff_test or
                    (lambda state, depth: depth > d or
                     game.terminal_test(state)))
+
     eval_fn = eval_fn or (lambda state: game.utility(state))
+
     best_score = -infinity
     beta = infinity
     best_action = None
+    
     for a in game.actions(state):
         v = min_value(game.result(state, a), best_score, beta, 1)
         if v > best_score:
             best_score = v
             best_action = a
+    
     return best_action
+
+
+def minimax_decision(state, game, d=4, cutoff_test=None, eval_fn=None):
+    """
+    Given a state in a game, calculate the best move by searching
+    forward all the way to the terminal states
+    """
+
+    player = game.to_move(state)
+
+    def max_value(state, depth):
+        if cutoff_test(state, depth):
+            return eval_fn(state)
+        v = -infinity
+
+        # if game.terminal_test(state):
+        #     return game.utility(state)
+        # v = -infinity
+        
+        for a in game.actions(state):
+            v = max(v, min_value(game.result(state, a), depth + 1))
+        return v
+
+    def min_value(state, depth):
+        if cutoff_test(state, depth):
+                return eval_fn(state)
+        v = infinity
+
+        # if game.terminal_test(state):
+        #     return game.utility(state)
+        # v = infinity
+
+        for a in game.actions(state):
+            v = min(v, max_value(game.result(state, a), depth + 1))
+        return v
+
+    cutoff_test = (cutoff_test or
+                   (lambda state, depth: depth > d or
+                    game.terminal_test(state)))
+
+    eval_fn = eval_fn or (lambda state: game.utility(state))
+
+    best_score = -infinity
+    best_action = None
+
+    # for a in game.actions(state):
+    #     v = min_value(game.result(state, a), 1)
+    #     if v > best_score:
+    #         best_score = v
+    #         best_action = a
+    # return best_action
+
+    # Body of minimax_decision:
+    return max(game.actions(state), 
+                key=lambda a: min_value(game.result(state, a), 1))
+
+

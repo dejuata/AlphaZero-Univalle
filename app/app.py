@@ -5,7 +5,7 @@ import random
 from flask import Flask, render_template, request, json
 from collections import namedtuple
 from game.game import Game
-from game.minimax import alphabeta_cutoff_search
+from game.minimax import minimax_decision
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
@@ -24,8 +24,11 @@ def position():
         return json.dumps({'position': position})
 
 def minimax(data):
-    state = GameState(to_move='max', utility=0, board=data['state'], moves=data['moves'])
-    return alphabeta_cutoff_search(state, Game())
+    game = Game()
+    moves = game.sort_moves(data['state']['apples'], data['moves'])
+    print(moves)
+    state = GameState(to_move='max', utility=0, board=data['state'], moves=moves)
+    return minimax_decision(state, game)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
