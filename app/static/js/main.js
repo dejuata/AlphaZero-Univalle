@@ -7,7 +7,7 @@ function insertPiecestoBoard() {
   btn.onclick = () => {
     STATE = [];
     let apples = document.getElementById("apples").value;
-    start(apples, [], () => setTimeout(() => {      
+    start(apples, [], () => setTimeout(() => {
       maxTurn()
     }, 500));
   }
@@ -34,8 +34,10 @@ function sendData(endpoint, info) {
   newXHR.open('POST', url);
   newXHR.setRequestHeader("Content-type", "application/json")
 
-  let jsonData = { data: info };  
- 
+  let jsonData = {
+    data: info
+  };
+
   let formattedJsonData = JSON.stringify(jsonData);
   newXHR.send(formattedJsonData);
 
@@ -53,10 +55,10 @@ function sendData(endpoint, info) {
     //   sendData('position', getState())
     // }    
     setPiece(position, () => {
-      STATE.push(getState());      
+      STATE.push(getState());
       console.log(STATE)
     });
-    console.log(position)   
+    console.log(position)
   }
 }
 
@@ -92,12 +94,12 @@ form.addEventListener("submit", function (event) {
   let file = document.getElementById('file').files[0];
 
   let reader = new FileReader();
-  
-  if(file) {
+
+  if (file) {
     reader.readAsText(file);
-    reader.addEventListener('load', function(e){
+    reader.addEventListener('load', function (e) {
       let data = e.target.result;
-      loadState(data);      
+      loadState(data);
     })
   }
 });
@@ -109,32 +111,32 @@ function loadState(data) {
   let min = '';
   let apples = [];
 
-  function range(row){
+  function range(row) {
     let j = 0;
-    if(row >= 0 && row < 6) j = 5;
-    if(row >= 6 && row < 12) j = 4;
-    if(row >= 12 && row < 18) j = 3;
-    if(row >= 18 && row < 24) j = 2;
-    if(row >= 24 && row < 30) j = 1;
-    if(row >= 30 && row < 36) j = 0;
+    if (row >= 0 && row < 6) j = 5;
+    if (row >= 6 && row < 12) j = 4;
+    if (row >= 12 && row < 18) j = 3;
+    if (row >= 18 && row < 24) j = 2;
+    if (row >= 24 && row < 30) j = 1;
+    if (row >= 30 && row < 36) j = 0;
 
     return j;
   }
 
   let col = 0;
-  for(let i = 0; i < 36; i++){
-    if(col == 6) col = 0;
+  for (let i = 0; i < 36; i++) {
+    if (col == 6) col = 0;
 
-    if(lst[i] == 1) max = `${range(i)}${col}`;
+    if (lst[i] == 1) max = `${range(i)}${col}`;
 
-    if(lst[i] == 2) min = `${range(i)}${col}`;
+    if (lst[i] == 2) min = `${range(i)}${col}`;
 
-    if(lst[i] == 5) apples.push(`${range(i)}${col}`);
+    if (lst[i] == 5) apples.push(`${range(i)}${col}`);
 
     col++
   }
 
-  let position = [max, min].concat( apples )
+  let position = [max, min].concat(apples)
 
   // console.log(position)
   start(apples.length, position, () => {
@@ -146,7 +148,7 @@ function loadState(data) {
 
     updateScoreInHtml(SETUP.score.max, SCORE.max);
     updateScoreInHtml(SETUP.score.min, SCORE.min);
-    
+
     setTimeout(() => {
       maxTurn();
       STATE = [];
@@ -154,16 +156,72 @@ function loadState(data) {
   })
 }
 
-function avoidReturning(position, states, score){
-  for(let i = 0; i < states.length; i++){
-    if(states[i]['state']['players'][0] == position && score == states[i]['state']['score']){
+function avoidReturning(position, states, score) {
+  for (let i = 0; i < states.length; i++) {
+    if (states[i]['state']['players'][0] == position && score == states[i]['state']['score']) {
       return true;
     }
   }
   return false;
 }
 
-function removeElement(array, element){
+function removeElement(array, element) {
   let index = array.indexOf(element);
   if (index > -1) return array.splice(index, 1);
 }
+
+function download(filename, text) {
+  var element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+function downloadState() {
+  let btn = document.getElementById('download');
+  // btn.setAttribute('download', 'state.txt');
+
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    let state = STATE[STATE.length - 1];
+    let p = state['state']['players'];
+    let a = state['state']['apples'];
+    let s = state['state']['score'];
+
+    let matrix = [
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+      [0, 0, 0, 0, 0, 0],
+    ]
+
+    matrix[parseInt(p[0][0])][parseInt(p[0][1])] = 1
+    matrix[parseInt(p[1][0])][parseInt(p[1][1])] = 2
+
+    // apples
+    for (let i = 0; i < a.length; i++) {
+      matrix[parseInt(a[i][0])][parseInt(a[i][1])] = 5
+    }
+
+    matrix = matrix.reverse()
+
+    let text = '';
+    for (let i = 0; i < 6; i++) {
+      text += matrix[i].join(' ') + '\n'
+    }
+    text += `${s['max']} ${s['min']} ${s['total']}`
+
+    download('state.txt', text);
+  }, false);
+}
+
+downloadState();

@@ -25,6 +25,7 @@ def position():
 
 def minimax(data):
     game = Game()
+    print(data['moves'])
     moves = game.sort_moves(data['state']['apples'], data['moves'])
     print(moves)
     state = GameState(to_move='max', utility=0, board=data['state'], moves=moves)

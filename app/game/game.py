@@ -34,7 +34,7 @@ class Game(object):
             to_move = 'min' if state.to_move == 'max' else 'max'
             utility = self.compute_utility(catch, state.to_move, state.utility)
             next_position = self.sort_moves(board['apples'], self.possible_move(position))
-            print(board)
+
             return GameState(
                 to_move=to_move,
                 utility=utility,
@@ -61,8 +61,32 @@ class Game(object):
             if m in apples:
                 init.append(m)
             else:
-                last.append(m)            
+                last.append(m)
+        
+        if len(apples) == 1:
+            last = self.sort_moves_h(last, apples[0])
+        
         return init + last
+    
+    # ordena las posiciones de acuerdo a aquellas
+    # que esten a un mov de capturar la manzana
+    # Solo usar cuando hay solo una manzana en el juego
+    def sort_moves_h(self, moves, apple):
+        init = list()
+        medi = list()
+        last = list()
+        for m in moves:
+            pos = self.possible_move(m);
+            if apple in pos:
+                init.append(m)
+            else:
+                for p in pos:
+                    pos1 = self.possible_move(p);
+                    if apple in pos1:
+                        medi.append(m)
+                    else:
+                        last.append(m)
+        return list(set(init + medi + last))
     
     def compute_utility(self, catch, player, utility):
         """
@@ -75,7 +99,7 @@ class Game(object):
             return utility - 1
         else:
             return utility
-            
+    
     def utility(self, state):
         """
         Return the value to player

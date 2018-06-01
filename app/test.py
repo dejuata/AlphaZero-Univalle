@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import namedtuple
 from game.game import Game
 from game.minimax import minimax_decision, minimax_decision1
@@ -6,59 +7,59 @@ from copy import deepcopy
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
 data =  {
-    'players':['03', '23'],
+    'players':['43', '14'],
     'score': {
-        'max': 3,
-        'min': 5,
+        'max': 2,
+        'min': 1,
         'total': 2
     },
-    'apples': ['05']
+    'apples': ['52', '53']
 }
 
-moves = ['15', '11', '24', '22']
+moves = ['55', '51', '35', '31', '24', '22']
 
 # Estado incial
-state = GameState(to_move='max', utility=0, board=data, moves=moves)
 game = Game()
+# moves = game.sort_moves(data['apples'], moves)
+# print(moves)
+state = GameState(to_move='max', utility=0, board=data, moves=moves)
 
-# print(game.sort_moves(data['apples'], moves))
-decision = minimax_decision1(state, game)
-print(decision)
+# decision = minimax_decision(state, game)
+# print(decision)
 
-# def sort_moves_h(['44', '40', '33', '31'], '43'):
+apples = data['apples']
+
+def sort_moves(apples, moves):
+    init = list()
+    last = list()
+    for m in moves:
+        if m in apples:
+            init.append(m)
+        else:
+            last.append(m)
     
-#     pass
+    if len(apples) == 1:
+        last = game.sort_moves_h(last, apples[0])
     
+    return init + last
+    
+# ordena las posiciones de acuerdo a aquellas
+# que esten a un mov de capturar la manzana
+# Solo usar cuando hay solo una manzana en el juego
+def sort_moves_h(moves, apples):
+    
+    init = set()
+    last = set()
 
-# first = game.result(state, '15')
-# print(first)
-
-# second = GameState(to_move='min', utility=0, board={'players': ['15', '23'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['35', '31', '15', '11', '44', '42', '04', '02'])
-# print('second', game.result(second, '11'))
-
-# third = GameState(to_move='max', utility=0, board={'players': ['15', '11'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['23', '03', '34'])
-# print('third', game.result(third, '34'))
-
-# four = GameState(to_move='min', utility=0, board={'players': ['34', '11'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['23', '03', '32', '30'])
-# print('four', game.result(four, '03'))
-
-# five = GameState(to_move='max', utility=0, board={'players': ['34', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['42', '22', '55', '53', '15', '13'])
-# print('five', game.result(five, '13'))
-
-# six = GameState(to_move='min', utility=0, board={'players': ['13', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['15', '11', '24', '22'])
-# print('six', game.result(six, '24'))
-
-# seven = GameState(to_move='max', utility=0, board={'players': ['13', '24'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['05']}, moves=['05', '25', '21', '01', '34', '32'])
-# print('seven', game.result(seven, '05'))
-
-# eight = GameState(to_move='min', utility=1, board={'players': ['05', '24'], 'score': {'max': 4, 'total': 1, 'min': 5}, 'apples': []}, moves=['32', '12', '45', '43', '05', '03'])
-# print('eight', game.result(eight, '32'))
-
-# eight = GameState(to_move='min', utility=0, board={'players': ['13', '03'], 'score': {'max': 3, 'total': 2, 'min': 5}, 'apples': ['15', '23']}, moves=['15', '11', '24', '22'])
-# print('eight', game.result(eight, '15'))
-
-# nine = GameState(to_move='max', utility=-1, board={'players': ['13', '15'], 'score': {'max': 3, 'total': 1, 'min': 6}, 'apples': ['23']}, moves=['25', '21', '05', '01', '34', '32'])
-# print('nine', game.result(nine, '25'))
-
-# ten = GameState(to_move='min', utility=-1, board={'players': ['25', '15'], 'score': {'max': 3, 'total': 1, 'min': 6}, 'apples': ['23']}, moves=['23', '03','34'])
-# print('ten', game.result(ten, '23'))
+    for m in moves:
+        pos = game.possible_move(m);
+        for a in apples:
+            if a in pos:
+                init.add(m)
+            else:
+                last.add(m)
+    print(init, last)
+    print(set(list(init) + list(last)))
+    # return list(set(init + last))
+# ['45', '41', '34', '32']
+print(sort_moves_h(moves, apples))
