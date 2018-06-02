@@ -1,6 +1,7 @@
 from copy import deepcopy
 from collections import namedtuple
 from game.utils import sort_moves, possible_move
+# from utils import sort_moves, possible_move
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
@@ -19,22 +20,29 @@ class Game(object):
         if move not in state.moves:
             return state
         else:
+            player = state.to_move
             board = deepcopy(state.board)
-            position = board['players'][1] if state.to_move == 'max' else board['players'][0]
+            position = board['players'][1] if player == 'max' else board['players'][0]
             catch = False
+            utility = state.utility
+            theft = self.theft_validation(player, board['score']) if board['theft'] else False
 
+            # Robar o no robar
+            if theft and move == position:
+                utility = self.theft(player, board['score']) + state.utility
+                
             # Capturar manzanas
-            if move in state.board['apples']:
+            elif move in state.board['apples']:
                 catch = self.catch_apples(state, board, move)
+                utility = self.compute_utility(catch, player, state.utility)
 
-            if state.to_move == 'max':
+            if player == 'max':
                 board['players'][0] = move
             else:
                 board['players'][1] = move
 
-            to_move = 'min' if state.to_move == 'max' else 'max'
-            utility = self.compute_utility(catch, state.to_move, state.utility)
-            next_position = sort_moves(board['apples'], possible_move(position))
+            to_move = 'min' if player == 'max' else 'max'
+            next_position = sort_moves(board['apples'], possible_move(position), self.theft_validation(player, board['score']), position)
 
             return GameState(
                 to_move=to_move,
@@ -91,14 +99,22 @@ class Game(object):
         """
         print(state)
 
-    def set_position_player(self, player, board):
-        pass
+    def theft(self, player, score):
+        if player == 'max':
+            score['max'] += score['min']
+            score['min'] = 0
+            return score['max']
+        else:
+            score['min'] += score['max']
+            score['max'] = 0
+            return -score['min']
 
-        # elif move == position:
-                
-            #     if state.to_move == 'max':
-            #         board['score']['max'] += board['score']['min']
-            #         board['score']['min'] = 0
-            #     else:
-            #         board['score']['min'] += board['score']['max']
-            #         board['score']['max'] = 0
+    def theft_validation(self, player, score):
+        theft = False
+
+        if player == 'max' and score['min'] > 0:
+            theft = True
+        elif player == 'min' and score['max'] > 0:
+            theft = True
+
+        return theft

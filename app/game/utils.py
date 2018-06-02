@@ -1,8 +1,10 @@
-def sort_moves(apples, moves):
+def sort_moves(apples, moves, theft, player):
     init = list()
     last = list()
     for m in moves:
-        if m in apples:
+        if theft and m == player:
+            init.append(m)
+        elif m in apples:
             init.append(m)
         else:
             last.append(m)
@@ -48,7 +50,7 @@ def sort_moves_last(apples, moves):
     last = set()
 
     for m in moves:
-        pos = possible_move(m);        
+        pos = possible_move(m);
         for a in apples:
             if a in pos:
                 init.add(m)

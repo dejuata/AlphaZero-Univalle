@@ -1,5 +1,6 @@
-let MOVE, CELL, MOVES, PLAYER, MAX = true;
+let MOVE, CELL, MOVES, PLAYER, MAX = true, THEFT = false;
 let STATE = [];
+let TOTAL = [0, 0];
 
 let SCORE = {
   max: 0,
@@ -38,13 +39,11 @@ function board(id) {
     for (let j = 0; j < 7; j++) {
       let cell = row.insertCell();
 
-      if (i == 1 ) {
+      if (i == 1) {
         cell.innerHTML = `<div class="notation">${columns[j]}</div>`;
-      }
-      else if (j == 0) {
+      } else if (j == 0) {
         cell.innerHTML = `<div class="notation">${i - 1}</div>`;
-      }
-      else {
+      } else {
         let color = '';
         if (i % 2 == 0 && j % 2 != 0) color = SETUP.css.cell.white;
         if (i % 2 != 0 && j % 2 != 0) color = SETUP.css.cell.black;
@@ -80,8 +79,7 @@ function positionPieces(n) {
     if (position.indexOf(tmp) < 0) {
       position.push(tmp);
       i++;
-    }
-    else {
+    } else {
       tmp = positionRandom();
     }
   }
@@ -90,7 +88,7 @@ function positionPieces(n) {
 
 function buildImages(position) {
   let images = [];
-  for (let i = 0; i < position.length; i++){
+  for (let i = 0; i < position.length; i++) {
     let div = document.getElementById(position[i]);
     images.push(div);
   }
@@ -98,8 +96,8 @@ function buildImages(position) {
 }
 
 function emptyBoard() {
-  for (let i = 0; i < 6; i++){
-    for (let j = 0; j < 6; j++){
+  for (let i = 0; i < 6; i++) {
+    for (let j = 0; j < 6; j++) {
       let div = document.getElementById(`${i}${j}`);
       while (div.firstChild) {
         div.removeChild(div.firstChild);
@@ -117,7 +115,7 @@ function emptyBoard() {
 
 function buildApples(n) {
   let apples = [];
-  for (let i = 0; i < n; i++){
+  for (let i = 0; i < n; i++) {
     apples.push(buildPieces(SETUP.apple));
   }
   return apples;
@@ -173,12 +171,11 @@ function possibleMove(n) {
 }
 
 function highlightCell(position, active) {
-  for (let i = 0; i < position.length; i++){
+  for (let i = 0; i < position.length; i++) {
     let cell = document.getElementById(position[i]);
     if (active) {
       cell.classList.add(SETUP.css.cell.highlight);
-    }
-    else {
+    } else {
       cell.classList.remove(SETUP.css.cell.highlight);
     }
   }
@@ -222,7 +219,9 @@ function theft(player) {
 function winner() {
   if (SCORE.total == 0) {
     let title = document.getElementById('winner-title');
-    let win = SCORE.max < SCORE.min ? '🎉 ¡You Win! 🎉 ': '💩 ¡You Lose! 💩';
+    let win = SCORE.max < SCORE.min ? '🎉 ¡You Win! 🎉 ' : '💩 ¡You Lose! 💩';
+    TOTAL[0] += SCORE.max > SCORE.min ? 1 : 0;
+    TOTAL[1] += SCORE.max < SCORE.min ? 1 : 0;
     title.innerText = win;
     UIkit.modal('#winner').show();
   }
@@ -238,7 +237,7 @@ function validateMove(e) {
   let child = CELL.childNodes;
   let player = buildPieces(PLAYER.id);
 
-  for (let i = 0; i < child.length; i++){
+  for (let i = 0; i < child.length; i++) {
     if (PLAYER.id == child[i].id) {
       CELL.removeChild(child[i]);
     }
@@ -248,12 +247,14 @@ function validateMove(e) {
     score(PLAYER.id);
   }
   // robo
-  if (e.firstChild && e.firstChild.id != SETUP.apple) {    
+  if (e.firstChild && e.firstChild.id != SETUP.apple) {
     e.classList.add('parent');
     e.firstChild.classList.add('img1');
     player.classList.add('img2');
     // Robo
-    // theft(PLAYER.id);
+    if(THEFT){
+      theft(PLAYER.id);
+    }    
   }
 
   e.appendChild(player);
@@ -306,8 +307,7 @@ function movePiece(e) {
     selectHorseToMove(e);
     e.classList.add(SETUP.css.cell.lemon);
     MOVE = true;
-  }
-  else if (MOVE && !MAX) {
+  } else if (MOVE && !MAX) {
     if (MOVES.indexOf(e.id) >= 0) {
       translateAnim(e);
       setTimeout(() => {
@@ -319,8 +319,7 @@ function movePiece(e) {
       removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
-    }
-    else {
+    } else {
       removeStyleCell();
       highlightCell(MOVES, false);
       MOVE = false;
@@ -342,7 +341,7 @@ function setPiece(position, callback) {
       translateAnim(nextCell);
       setTimeout(() => {
         validateMove(nextCell);
-        MAX = false;       
+        MAX = false;
       }, 400);
       removeStyleCell();
       highlightCell(MOVES, false);
@@ -351,21 +350,19 @@ function setPiece(position, callback) {
   callback();
 }
 
-function getState(){
+function getState() {
   let apples = Array.from(document.getElementsByClassName('rA'));
-  
+
   return {
     'state': {
-      'players':[
+      'players': [
         document.getElementById('wN').parentElement.id,
         document.getElementById('bN').parentElement.id
       ],
       'score': SCORE,
-      'apples': apples.map(x => x.parentElement.id)
+      'theft': THEFT,
+      'apples': apples.map(x => x.parentElement.id)      
     },
     'moves': MOVES,
   }
 }
-
-
-

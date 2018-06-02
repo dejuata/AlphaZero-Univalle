@@ -6,6 +6,7 @@ function insertPiecestoBoard() {
 
   btn.onclick = () => {
     STATE = [];
+    theftEnabled();
     let apples = document.getElementById("apples").value;
     start(apples, [], () => setTimeout(() => {
       maxTurn()
@@ -19,6 +20,9 @@ function playAgain() {
   let btn = document.getElementById('again');
   btn.onclick = () => {
     STATE = [];
+    console.log(TOTAL[0], 'max')
+    console.log(TOTAL[1], 'min')
+    theftEnabled();
     let apples = document.getElementById("apples").value;
     start(apples, [], () => setTimeout(() => maxTurn(), 500));
   }
@@ -44,21 +48,10 @@ function sendData(endpoint, info) {
   function reqListener() {
     let data = JSON.parse(this.response);
     let position = data['position'];
-
-    // if(!avoidReturning(position, STATE, SCORE)){
-    //   setPiece(position, () => {
-    //     STATE.push(getState());      
-    //     console.log(STATE)
-    //   });
-    // } else {
-    //   removeElement(MOVES, position)
-    //   sendData('position', getState())
-    // }    
+ 
     setPiece(position, () => {
       STATE.push(getState());
-      console.log(STATE)
     });
-    console.log(position)
   }
 }
 
@@ -141,6 +134,7 @@ function loadState(data) {
   // console.log(position)
   start(apples.length, position, () => {
     setUploadForm();
+    theftEnabled();
     // update score
     SCORE.max = parseInt(lst[36])
     SCORE.min = parseInt(lst[37])
@@ -154,15 +148,6 @@ function loadState(data) {
       STATE = [];
     }, 500);
   })
-}
-
-function avoidReturning(position, states, score) {
-  for (let i = 0; i < states.length; i++) {
-    if (states[i]['state']['players'][0] == position && score == states[i]['state']['score']) {
-      return true;
-    }
-  }
-  return false;
 }
 
 function removeElement(array, element) {
@@ -225,3 +210,12 @@ function downloadState() {
 }
 
 downloadState();
+
+function theftEnabled() {
+  if (document.getElementById("theft").checked) {
+    THEFT = true;
+  }
+  else {
+    THEFT = false;
+  }
+}

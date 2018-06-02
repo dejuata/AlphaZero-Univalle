@@ -26,10 +26,13 @@ def position():
 
 def minimax(data):
     game = Game()
-    print(data['moves'])
-    moves = sort_moves(data['state']['apples'], data['moves'])
-    print(moves)
+    # print(data['moves'])
+    theft = game.theft_validation('max', data['state']['score']) if data['state']['theft'] else False
+    moves = sort_moves(data['state']['apples'], data['moves'], theft, data['state']['players'][1])
+    # print(moves)
+    # print(theft)
     state = GameState(to_move='max', utility=0, board=data['state'], moves=moves)
+    # print(state)
     return minimax_decision(state, game)
 
 if __name__ == '__main__':
