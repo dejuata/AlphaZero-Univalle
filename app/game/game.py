@@ -1,5 +1,6 @@
 from copy import deepcopy
 from collections import namedtuple
+from game.utils import sort_moves, possible_move
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
 
@@ -18,7 +19,7 @@ class Game(object):
         if move not in state.moves:
             return state
         else:
-            board = deepcopy(state.board)            
+            board = deepcopy(state.board)
             position = board['players'][1] if state.to_move == 'max' else board['players'][0]
             catch = False
 
@@ -33,7 +34,7 @@ class Game(object):
 
             to_move = 'min' if state.to_move == 'max' else 'max'
             utility = self.compute_utility(catch, state.to_move, state.utility)
-            next_position = self.sort_moves(board['apples'], self.possible_move(position))
+            next_position = sort_moves(board['apples'], possible_move(position))
 
             return GameState(
                 to_move=to_move,
@@ -54,40 +55,6 @@ class Game(object):
 
         return True
 
-    def sort_moves(self, apples, moves):
-        init = list()
-        last = list()
-        for m in moves:
-            if m in apples:
-                init.append(m)
-            else:
-                last.append(m)
-        
-        if len(apples) == 1:
-            last = self.sort_moves_h(last, apples[0])
-        
-        return init + last
-    
-    # ordena las posiciones de acuerdo a aquellas
-    # que esten a un mov de capturar la manzana
-    # Solo usar cuando hay solo una manzana en el juego
-    def sort_moves_h(self, moves, apple):
-        init = list()
-        medi = list()
-        last = list()
-        for m in moves:
-            pos = self.possible_move(m);
-            if apple in pos:
-                init.append(m)
-            else:
-                for p in pos:
-                    pos1 = self.possible_move(p);
-                    if apple in pos1:
-                        medi.append(m)
-                    else:
-                        last.append(m)
-        return list(set(init + medi + last))
-    
     def compute_utility(self, catch, player, utility):
         """
         If max wins with this move, return 1; 
@@ -123,29 +90,6 @@ class Game(object):
         Print or otherwise display the state.
         """
         print(state)
-
-    def possible_move(self, pos):
-        result = list()
-        row = int(pos[0])
-        col = int(pos[1])
-
-        if row >= 0 and row <= 4:
-            if (col >= 0 and col <= 3): result.append("{}{}".format(row + 1, col + 2))
-            if (col <= 5 and col >= 2): result.append("{}{}".format(row + 1, col - 2))
-        
-        if row <= 5 and row >= 1:
-            if col >= 0 and col <= 3: result.append("{}{}".format(row - 1, col + 2))
-            if col <= 5 and col >= 2: result.append("{}{}".format(row - 1, col - 2))
-        
-        if row >= 0 and row <= 3: 
-            if col >= 0 and col <= 4: result.append("{}{}".format(row + 2, col + 1))
-            if col <= 5 and col >= 1: result.append("{}{}".format(row + 2, col - 1))
-        
-        if row >= 2 and row <= 5:
-            if col >= 0 and col <= 4: result.append("{}{}".format(row - 2, col + 1))
-            if col <= 5 and col >= 1: result.append("{}{}".format(row - 2, col - 1))
-
-        return result
 
     def set_position_player(self, player, board):
         pass

@@ -5,6 +5,7 @@ import random
 from flask import Flask, render_template, request, json
 from collections import namedtuple
 from game.game import Game
+from game.utils import sort_moves
 from game.minimax import minimax_decision
 
 GameState = namedtuple('GameState', 'to_move, utility, board, moves')
@@ -26,7 +27,7 @@ def position():
 def minimax(data):
     game = Game()
     print(data['moves'])
-    moves = game.sort_moves(data['state']['apples'], data['moves'])
+    moves = sort_moves(data['state']['apples'], data['moves'])
     print(moves)
     state = GameState(to_move='max', utility=0, board=data['state'], moves=moves)
     return minimax_decision(state, game)
