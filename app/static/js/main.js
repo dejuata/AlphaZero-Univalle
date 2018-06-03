@@ -47,8 +47,10 @@ function sendData(endpoint, info) {
 
   function reqListener() {
     let data = JSON.parse(this.response);
+    let message = data['message'];
+    console.log(message);
     let position = data['position'];
- 
+
     setPiece(position, () => {
       STATE.push(getState());
     });
@@ -214,8 +216,7 @@ downloadState();
 function theftEnabled() {
   if (document.getElementById("theft").checked) {
     THEFT = true;
-  }
-  else {
+  } else {
     THEFT = false;
   }
 }

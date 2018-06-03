@@ -1,4 +1,4 @@
-Flask==0.10.1
+Flask
 Werkzeug==0.14.1
 gunicorn
 

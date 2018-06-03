@@ -1,4 +1,5 @@
-let MOVE, CELL, MOVES, PLAYER, MAX = true, THEFT = false;
+let MOVE, CELL, MOVES, PLAYER, MAX = true,
+  THEFT = false;
 let STATE = [];
 let TOTAL = [0, 0];
 
@@ -252,9 +253,9 @@ function validateMove(e) {
     e.firstChild.classList.add('img1');
     player.classList.add('img2');
     // Robo
-    if(THEFT){
+    if (THEFT) {
       theft(PLAYER.id);
-    }    
+    }
   }
 
   e.appendChild(player);
@@ -361,7 +362,7 @@ function getState() {
       ],
       'score': SCORE,
       'theft': THEFT,
-      'apples': apples.map(x => x.parentElement.id)      
+      'apples': apples.map(x => x.parentElement.id)
     },
     'moves': MOVES,
   }
