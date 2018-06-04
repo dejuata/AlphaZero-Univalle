@@ -22,19 +22,27 @@ class Game(object):
         else:
             player = state.to_move
             board = deepcopy(state.board)
-            position = board['players'][1] if player == 'max' else board['players'][0]
-            catch = False
+            players = board['players']
+            apples = board['apples']
+            score = board['score']
+            position = players[1] if player == 'max' else players[0]
             utility = state.utility
-            theft = self.theft_validation(player, board['score']) if board['theft'] else False
 
-            # Robar o no robar
-            if theft and move == position:
-                utility = self.theft(player, board['score']) + state.utility
+            # todo esto deberia suceder si el robar esta activo, sino, simplemente capture
+            if board['theft'] and self.theft(position, move):
+                # Calculo utilidad por robo
+                theft = self.utility_by_theft(player, score)
+                # print(theft)
+                utility += theft
+                self.set_score(score, True, player, theft)
                 
-            # Capturar manzanas
-            elif move in state.board['apples']:
-                catch = self.catch_apples(state, board, move)
-                utility = self.compute_utility(catch, player, state.utility)
+            elif self.catch(apples, move):
+                # Calculo utilidad por capturar manzana
+                catch = self.utility_by_catch(self.catch(apples, move), player)
+                # print(catch)
+                apples.remove(move)
+                utility += catch
+                self.set_score(score, False, player, catch)
 
             if player == 'max':
                 board['players'][0] = move
@@ -42,7 +50,7 @@ class Game(object):
                 board['players'][1] = move
 
             to_move = 'min' if player == 'max' else 'max'
-            next_position = sort_moves(board['apples'], possible_move(position), self.theft_validation(player, board['score']), position)
+            next_position = sort_moves(apples, possible_move(position), board['theft'] and self.theft_h(player, score), position)
 
             return GameState(
                 to_move=to_move,
@@ -51,29 +59,46 @@ class Game(object):
                 moves=next_position if board['score']['total'] > 0 and len(board['apples']) > 0 else []
             )
 
-    def catch_apples(self, state, board, move):
-        board['apples'].remove(move)
+    def catch(self, apples, move):
+        return move in apples
+    
+    def theft(self, position, move):
+        return position == move
 
-        if state.to_move == 'max':
-            board['score']['max'] += 1
-            board['score']['total'] -= 1
-        elif state.to_move == 'min':
-            board['score']['min'] += 1
-            board['score']['total'] -= 1
+    def theft_h(self, player, score):
+        return score['min'] > 0 if player == 'max' else score['max'] > 0
 
-        return True
-
-    def compute_utility(self, catch, player, utility):
-        """
-        If max wins with this move, return 1; 
-        if min wins return -1; else return 0.
-        """
+    def utility_by_catch(self, catch, player):
         if player == 'max' and catch:
-            return utility + 1
+            return +1
         elif player == 'min' and catch:
-            return utility - 1
+            return -1
         else:
-            return utility
+            return 0
+    
+    def utility_by_theft(self, player, score):
+        if player == 'max':
+            return +score['min']
+        elif player == 'min':
+            return -score['max'] * 10
+        else:
+            return 0
+
+    def set_score(self, score, theft, player, value):
+        if theft:
+            if player == 'max':
+                score['max'] += value
+                score['min'] = 0
+            else:
+                score['min'] -= value
+                score['max'] = 0
+        else:
+            if player == 'max':
+                score['max'] += 1
+            else:
+                score['min'] += 1
+
+            score['total'] -=1
     
     def utility(self, state):
         """
@@ -99,22 +124,5 @@ class Game(object):
         """
         print(state)
 
-    def theft(self, player, score):
-        if player == 'max':
-            score['max'] += score['min']
-            score['min'] = 0
-            return score['max']
-        else:
-            score['min'] += score['max']
-            score['max'] = 0
-            return -score['min']
+    
 
-    def theft_validation(self, player, score):
-        theft = False
-
-        if player == 'max' and score['min'] > 0:
-            theft = True
-        elif player == 'min' and score['max'] > 0:
-            theft = True
-
-        return theft

@@ -47,9 +47,15 @@ function sendData(endpoint, info) {
 
   function reqListener() {
     let data = JSON.parse(this.response);
-    let message = data['message'];
-    console.log(message);
+    let message = data['message'];    
     let position = data['position'];
+    
+    if (message != ''){
+      notifyMe({
+        icon: `${document.location.origin}/static/img/wN.png`,
+        body: message
+      })
+    }
 
     setPiece(position, () => {
       STATE.push(getState());

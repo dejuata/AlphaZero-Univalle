@@ -44,7 +44,7 @@ or
 4. Enter the app folder and execute 
   ```
   $ cd app
-  $ pip intall -r requirements.txt
+  $ pip install -r requirements.txt
   $ python app.py
   ```
   

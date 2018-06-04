@@ -22,17 +22,39 @@ def position():
         request_json = request.get_json()
         data = request_json['data']
         position = minimax(data)
+        message = notification(data, position)
         return json.dumps({
             'position': position,
-            'message': 'Te voy a robar'})
+            'message': message})
 
 def minimax(data):
     game = Game()
-    theft = game.theft_validation('max', data['state']['score']) if data['state']['theft'] else False
-    moves = sort_moves(data['state']['apples'], data['moves'], theft, data['state']['players'][1])
-    state = GameState(to_move='max', utility=0, board=data['state'], moves=moves)
-    return minimax_decision(state, game)
+    state = data['state']
+    theft = state['theft'] and game.theft_h('max', state['score'])
+    moves = sort_moves(state['apples'], data['moves'], theft, state['players'][1])
+    init = GameState(to_move='max', utility=0, board=state, moves=moves)
+    print(theft, moves)
+    print(init)
+    return minimax_decision(init, game)
 
+def notification(data, move):
+    state = GameState(to_move='max', utility=0, board=data['state'], moves=data['moves'])
+    result = Game().result(state, move)
+    board = result.board
+    number = random.random()
+    message = ''
+    if abs(board['score']['max'] - board['score']['min']) > 2:
+        if  number >= 0.8:
+            message = "I'm very close to victory"
+        elif number <= 0.2:
+            message = "For you to play if you're going to lose"
+    elif move == board['players'][1] and data['state']['theft']:
+        if number >= 0.8:
+            message = "I'm going to steal you"
+        elif number <= 0.2:
+            message = "I'm following you"
+    return message
+
+    
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0')
-    app.run()
+    app.run(host='0.0.0.0')
